@@ -49,7 +49,7 @@ static bool in_tab = false;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [BEPO] = {
-    {BP_DLR,   BP_DQOT, KC_PERC,  KC_ESC,    BP_LPRN, BP_RPRN,        BP_AT,       BP_PLUS, BP_MINS,   BP_SLSH, BP_ASTR, BP_EQL},
+    {BP_DLR,   BP_DQOT, BP_PERC,  KC_ESC,    BP_LPRN, BP_RPRN,        BP_AT,       BP_PLUS, BP_MINS,   BP_SLSH, BP_ASTR, BP_EQL},
     {KC_TAB,   BP_B,    BP_ECUT,  BP_P,      BP_O,    BP_GRV,         BP_DCRC,     BP_V,    BP_D,      BP_L,    BP_J,    BP_Z},
     {BP_W,     BP_A,    BP_U,     BP_I,      BP_E,    SFT_T(BP_COMM), SFT_T(BP_C), BP_T,    BP_S,      BP_R,    BP_N,    BP_M},
     {KC_LCTRL, BP_Z,    BP_Y,     BP_X,      BP_DOT,  BP_K,           BP_APOS,     BP_Q,    BP_G,      BP_H,    BP_F,    KC_RCTL},
@@ -136,16 +136,40 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record)
     case KC_ESC:
       // macro to have escape also desactivating caps lock if active
       if (record->event.pressed) {
-        if (capslock_on) {
-          SEND_STRING(SS_TAP(X_ESCAPE) SS_TAP(X_CAPSLOCK));
-          capslock_on = false;
-        } else {
-          SEND_STRING(SS_TAP(X_ESCAPE));
+        if (keyboard_report->mods & MOD_BIT(KC_LSFT))
+        {
+          // key press with shift -> override it for the correct number
+          SEND_STRING(SS_TAP(X_3));
+        }
+        else
+        {
+          // not on shift -> esc
+          if (capslock_on) {
+            SEND_STRING(SS_TAP(X_ESCAPE) SS_TAP(X_CAPSLOCK));
+            capslock_on = false;
+          } else {
+            SEND_STRING(SS_TAP(X_ESCAPE));
+          }
         }
         return false;
       }
       break;
 
+    case BP_PERC:
+      if (record->event.pressed) {
+        if (keyboard_report->mods & MOD_BIT(KC_LSFT))
+        {
+          // key press with shift -> override it for the correct number
+          SEND_STRING(SS_TAP(X_2));
+        }
+        else
+        {
+          // not on shift -> normal key
+          SEND_STRING(SS_TAP(X_EQUAL)); // BP_PERC = KC_EQUAL
+        }
+        return false;
+      }
+      break;
     case COPY:
       if (record->event.pressed) {
         SEND_STRING(SS_LCTRL("c"));
@@ -208,6 +232,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record)
         return false;
       }
       break;
+
     case LED:
       if (record->event.pressed) {
         led_level++;
