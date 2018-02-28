@@ -45,11 +45,11 @@ static bool capslock_on = false;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [BEPO] = {
-    {BP_DLR,   BP_DQOT, KC_PERC, KC_ESC,    BP_LPRN,   BP_RPRN,        BP_AT,       BP_PLUS,   BP_MINS,  BP_SLSH, BP_ASTR, BP_EQL},
-    {KC_TAB,   BP_B,    BP_ECUT, BP_P,      BP_O,      BP_GRV,         BP_DCRC,     BP_V,      BP_D,     BP_L,    BP_J,    BP_Z},
-    {BP_W,     BP_A,    BP_U,    BP_I,      BP_E,      SFT_T(BP_COMM), SFT_T(BP_C), BP_T,      BP_S,     BP_R,    BP_N,    BP_M},
-    {KC_LCTRL, BP_Z,    BP_Y,    BP_X,      BP_DOT,    BP_K,           BP_APOS,     BP_Q,      BP_G,     BP_H,    BP_F,    KC_RCTL},
-    {COPY,     PASTE,   CUT,     MO(DROP),  MO(LOWER), KC_ENT,         KC_SPC,      MO(RAISE), MO(RISE), xxxxxxx, xxxxxxx, BP_CCED},
+    {BP_DLR,   BP_DQOT, KC_PERC,  KC_ESC,    BP_LPRN, BP_RPRN,        BP_AT,       BP_PLUS, BP_MINS,   BP_SLSH, BP_ASTR, BP_EQL},
+    {KC_TAB,   BP_B,    BP_ECUT,  BP_P,      BP_O,    BP_GRV,         BP_DCRC,     BP_V,    BP_D,      BP_L,    BP_J,    BP_Z},
+    {BP_W,     BP_A,    BP_U,     BP_I,      BP_E,    SFT_T(BP_COMM), SFT_T(BP_C), BP_T,    BP_S,      BP_R,    BP_N,    BP_M},
+    {KC_LCTRL, BP_Z,    BP_Y,     BP_X,      BP_DOT,  BP_K,           BP_APOS,     BP_Q,    BP_G,      BP_H,    BP_F,    KC_RCTL},
+    {COPY,     PASTE,   MO(DROP), MO(LOWER), KC_BSPC, KC_DEL,         KC_ENT,      KC_SPC,  MO(RAISE), MO(RISE),  xxxxxxx, BP_CCED},
   },
 
   [RAISE] = {
