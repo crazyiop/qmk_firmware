@@ -16,177 +16,79 @@
 
 #include "preonic.h"
 #include "action_layer.h"
+#include "keymap_bepo.h"
+#include <sendstring_bepo.h>
 
-enum preonic_layers {
-  _QWERTY,
-  _COLEMAK,
-  _DVORAK,
-  _LOWER,
-  _RAISE,
-  _ADJUST
+#define _______ KC_TRNS
+#define xxxxxxx KC_NO
+
+// keymaps
+enum layers {
+  BEPO = 0,
+  NUM,
+  UTILITY,
+  ALT_GR,
+  BLANK,
 };
 
-enum preonic_keycodes {
-  QWERTY = SAFE_RANGE,
-  COLEMAK,
-  DVORAK,
-  LOWER,
-  RAISE,
-  BACKLIT
+// custom keycode, for macro
+enum custom_keycodes {
+  COPY = SAFE_RANGE, // can always be here
+  PASTE,
+  CUT,
+  SHIFT,
+  CAPSLOCK,
 };
+
+static bool capslock_on = false;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
+  [BEPO] = {
+    {BP_DLR,   BP_DQOT,  BP_LGIL, BP_RGIL,     BP_LPRN,      BP_RPRN, BP_AT,   BP_PLUS,     BP_MINS,     BP_SLSH, BP_ASTR, BP_EQL},
+    {KC_TAB,   BP_B,     BP_ECUT, BP_P,        BP_O,         BP_EGRV, BP_DCRC, BP_V,        BP_D,        BP_L,    BP_J,    BP_Z},
+    {BP_W,     BP_A,     BP_U,    BP_I,        SFT_T(BP_E),  BP_COMM, BP_C,    SFT_T(BP_T), BP_S,        BP_R,        BP_N,    BP_M},
+    {KC_LCTRL, BP_AGRV,  BP_Y,    BP_X,        BP_DOT,       BP_K,    BP_APOS, BP_Q,        BP_G,        BP_H,    BP_F,    KC_RCTL},
+    {COPY,     PASTE,    CUT,     MO(UTILITY), KC_LALT,      KC_BSPC, KC_SPC,  KC_RALT,     MO(UTILITY), xxxxxxx, xxxxxxx,  BP_CCED},
+  },
 
-/* Qwerty
- * ,-----------------------------------------------------------------------------------.
- * |   `  |   1  |   2  |   3  |   4  |   5  |   6  |   7  |   8  |   9  |   0  | Bksp |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Tab  |   Q  |   W  |   E  |   R  |   T  |   Y  |   U  |   I  |   O  |   P  | Del  |
- * |------+------+------+------+------+-------------+------+------+------+------+------|
- * | Esc  |   A  |   S  |   D  |   F  |   G  |   H  |   J  |   K  |   L  |   ;  |  "   |
- * |------+------+------+------+------+------|------+------+------+------+------+------|
- * | Shift|   Z  |   X  |   C  |   V  |   B  |   N  |   M  |   ,  |   .  |   /  |Enter |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Brite| Ctrl | Alt  | GUI  |Lower |    Space    |Raise | Left | Down |  Up  |Right |
- * `-----------------------------------------------------------------------------------'
- */
-[_QWERTY] = {
-  {KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_BSPC},
-  {KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_DEL},
-  {KC_ESC,  KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT},
-  {KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_ENT },
-  {BACKLIT, KC_LCTL, KC_LALT, KC_LGUI, LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT}
-},
+  [BLANK] = {
+    {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______},
+    {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______},
+    {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______},
+    {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______},
+    {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______},
+  },
 
-/* Colemak
- * ,-----------------------------------------------------------------------------------.
- * |   `  |   1  |   2  |   3  |   4  |   5  |   6  |   7  |   8  |   9  |   0  | Bksp |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Tab  |   Q  |   W  |   F  |   P  |   G  |   J  |   L  |   U  |   Y  |   ;  | Del  |
- * |------+------+------+------+------+-------------+------+------+------+------+------|
- * | Esc  |   A  |   R  |   S  |   T  |   D  |   H  |   N  |   E  |   I  |   O  |  "   |
- * |------+------+------+------+------+------|------+------+------+------+------+------|
- * | Shift|   Z  |   X  |   C  |   V  |   B  |   K  |   M  |   ,  |   .  |   /  |Enter |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Brite| Ctrl | Alt  | GUI  |Lower |    Space    |Raise | Left | Down |  Up  |Right |
- * `-----------------------------------------------------------------------------------'
- */
-[_COLEMAK] = {
-  {KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_BSPC},
-  {KC_TAB,  KC_Q,    KC_W,    KC_F,    KC_P,    KC_G,    KC_J,    KC_L,    KC_U,    KC_Y,    KC_SCLN, KC_DEL},
-  {KC_ESC,  KC_A,    KC_R,    KC_S,    KC_T,    KC_D,    KC_H,    KC_N,    KC_E,    KC_I,    KC_O,    KC_QUOT},
-  {KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_K,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_ENT },
-  {BACKLIT, KC_LCTL, KC_LALT, KC_LGUI, LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT}
-},
+  [UTILITY] = {
+    {_______, KC_F1,   KC_F2,   KC_F3,   KC_F4,    KC_F5,   KC_F6,   KC_F7,      KC_F8,    KC_F9,      KC_F10,  KC_F11},
+    {_______, _______, KC_PGDN, KC_UP,   KC_PGUP,  _______, _______, RCTL(BP_B), KC_UP,    RCTL(BP_W), _______, KC_F12},
+    {KC_BTN3, _______, KC_LEFT, KC_DOWN, KC_RIGHT, _______, _______, KC_LEFT,    KC_DOWN,  KC_RGHT,    _______, CAPSLOCK},
+    {_______, _______, _______, _______, _______,  _______, _______, _______,     _______, _______,    _______, _______},
+    {_______, _______, _______, _______, _______,  _______, _______, _______,    _______,  _______,    _______, _______},
+  },
 
-/* Dvorak
- * ,-----------------------------------------------------------------------------------.
- * |   `  |   1  |   2  |   3  |   4  |   5  |   6  |   7  |   8  |   9  |   0  | Bksp |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Tab  |   "  |   ,  |   .  |   P  |   Y  |   F  |   G  |   C  |   R  |   L  | Del  |
- * |------+------+------+------+------+-------------+------+------+------+------+------|
- * | Esc  |   A  |   O  |   E  |   U  |   I  |   D  |   H  |   T  |   N  |   S  |  /   |
- * |------+------+------+------+------+------|------+------+------+------+------+------|
- * | Shift|   ;  |   Q  |   J  |   K  |   X  |   B  |   M  |   W  |   V  |   Z  |Enter |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * | Brite| Ctrl | Alt  | GUI  |Lower |    Space    |Raise | Left | Down |  Up  |Right |
- * `-----------------------------------------------------------------------------------'
- */
-[_DVORAK] = {
-  {KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_BSPC},
-  {KC_TAB,  KC_QUOT, KC_COMM, KC_DOT,  KC_P,    KC_Y,    KC_F,    KC_G,    KC_C,    KC_R,    KC_L,    KC_DEL},
-  {KC_ESC,  KC_A,    KC_O,    KC_E,    KC_U,    KC_I,    KC_D,    KC_H,    KC_T,    KC_N,    KC_S,    KC_SLSH},
-  {KC_LSFT, KC_SCLN, KC_Q,    KC_J,    KC_K,    KC_X,    KC_B,    KC_M,    KC_W,    KC_V,    KC_Z,    KC_ENT },
-  {BACKLIT, KC_LCTL, KC_LALT, KC_LGUI, LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT}
-},
+  [ALT_GR] = {
+    {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______},
+    {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______},
+    {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______},
+    {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______},
+    {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______},
+  },
 
-/* Lower
- * ,-----------------------------------------------------------------------------------.
- * |   ~  |   !  |   @  |   #  |   $  |   %  |   ^  |   &  |   *  |   (  |   )  | Bksp |
- * |------+------+------+------+------+-------------+------+------+------+------+------|
- * |   ~  |   !  |   @  |   #  |   $  |   %  |   ^  |   &  |   *  |   (  |   )  | Del  |
- * |------+------+------+------+------+-------------+------+------+------+------+------|
- * | Del  |  F1  |  F2  |  F3  |  F4  |  F5  |  F6  |   _  |   +  |   {  |   }  |  |   |
- * |------+------+------+------+------+------|------+------+------+------+------+------|
- * |      |  F7  |  F8  |  F9  |  F10 |  F11 |  F12 |ISO ~ |ISO | |      |      |      |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |      |      |      |      |             |      | Next | Vol- | Vol+ | Play |
- * `-----------------------------------------------------------------------------------'
- */
-[_LOWER] = {
-  {KC_TILD, KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC, KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_BSPC},
-  {KC_TILD, KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC, KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_DEL},
-  {KC_DEL,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_UNDS, KC_PLUS, KC_LCBR, KC_RCBR, KC_PIPE},
-  {_______, KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,S(KC_NUHS),S(KC_NUBS),KC_HOME, KC_END, _______},
-  {_______, _______, _______, _______, _______, _______, _______, _______, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY}
-},
-
-/* Raise
- * ,-----------------------------------------------------------------------------------.
- * |   `  |   1  |   2  |   3  |   4  |   5  |   6  |   7  |   8  |   9  |   0  | Bksp |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |   `  |   1  |   2  |   3  |   4  |   5  |   6  |   7  |   8  |   9  |   0  | Del  |
- * |------+------+------+------+------+-------------+------+------+------+------+------|
- * | Del  |  F1  |  F2  |  F3  |  F4  |  F5  |  F6  |   -  |   =  |   [  |   ]  |  \   |
- * |------+------+------+------+------+------|------+------+------+------+------+------|
- * |      |  F7  |  F8  |  F9  |  F10 |  F11 |  F12 |ISO # |ISO / |      |      |      |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |      |      |      |      |             |      | Next | Vol- | Vol+ | Play |
- * `-----------------------------------------------------------------------------------'
- */
-[_RAISE] = {
-  {KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_BSPC},
-  {KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_DEL},
-  {KC_DEL,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_MINS, KC_EQL,  KC_LBRC, KC_RBRC, KC_BSLS},
-  {_______, KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_NUHS, KC_NUBS, KC_PGUP, KC_PGDN, _______},
-  {_______, _______, _______, _______, _______, _______, _______, _______, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY}
-},
-
-/* Adjust (Lower + Raise)
- * ,-----------------------------------------------------------------------------------.
- * |  F1  |  F2  |  F3  |  F4  |  F5  |  F6  |  F7  |  F8  |  F9  |  F10 |  F11 |  F12 |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      | Reset|      |      |      |      |      |      |      |      |      |  Del |
- * |------+------+------+------+------+-------------+------+------+------+------+------|
- * |      |      |      |Aud on|AudOff|AGnorm|AGswap|Qwerty|Colemk|Dvorak|      |      |
- * |------+------+------+------+------+------|------+------+------+------+------+------|
- * |      |Voice-|Voice+|Mus on|MusOff|MidiOn|MidOff|      |      |      |      |      |
- * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |      |      |      |      |             |      |      |      |      |      |
- * `-----------------------------------------------------------------------------------'
- */
-[_ADJUST] = {
-  {KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12},
-  {_______, RESET,   DEBUG,   _______, _______, _______, _______, TERM_ON, TERM_OFF,_______, _______, KC_DEL},
-  {_______, _______, MU_MOD,  AU_ON,   AU_OFF,  AG_NORM, AG_SWAP, QWERTY,  COLEMAK, DVORAK,  _______, _______},
-  {_______, MUV_DE,  MUV_IN,  MU_ON,   MU_OFF,  MI_ON,   MI_OFF,  _______, _______, _______, _______, _______},
-  {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______}
-}
-
+  [NUM] = {
+    {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______},
+    {_______, _______, _______, _______, _______, _______, _______, S(KC_7), S(KC_8), S(KC_9), _______, KC_TAB },
+    {_______, _______, _______, _______, _______, _______, _______, S(KC_4), S(KC_5), S(KC_6), _______, _______},
+    {_______, _______, _______, _______, _______, _______, _______, S(KC_1), S(KC_2), S(KC_3), _______, _______},
+    {_______, _______, _______, _______, _______, _______, _______, S(KC_0), BP_DOT,  BP_COMM, _______, _______},
+  },
 
 };
 
+        /*
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   switch (keycode) {
-        case QWERTY:
-          if (record->event.pressed) {
-            set_single_persistent_default_layer(_QWERTY);
-          }
-          return false;
-          break;
-        case COLEMAK:
-          if (record->event.pressed) {
-            set_single_persistent_default_layer(_COLEMAK);
-          }
-          return false;
-          break;
-        case DVORAK:
-          if (record->event.pressed) {
-            set_single_persistent_default_layer(_DVORAK);
-          }
-          return false;
-          break;
-        case LOWER:
+       case LOWER:
           if (record->event.pressed) {
             layer_on(_LOWER);
             update_tri_layer(_LOWER, _RAISE, _ADJUST);
@@ -206,19 +108,117 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           }
           return false;
           break;
-        case BACKLIT:
-          if (record->event.pressed) {
-            register_code(KC_RSFT);
-            #ifdef BACKLIGHT_ENABLE
-              backlight_step();
-            #endif
-            PORTE &= ~(1<<6);
-          } else {
-            unregister_code(KC_RSFT);
-            PORTE |= (1<<6);
-          }
-          return false;
-          break;
       }
     return true;
+};
+        */
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record)
+{
+  uint8_t layer = biton32(layer_state);
+
+  if (layer == ALT_GR) {
+    if ((keycode >= KC_A) && (keycode <= KC_EXSEL)
+      // && !((keycode == KC_1) ||
+      //    )
+       )
+    {
+      if (record->event.pressed) {
+        register_mods(MOD_BIT(KC_RALT));
+      } else {
+        register_mods(MOD_BIT(KC_RALT));
+      }
+    }
+  } else {
+    switch(keycode) {
+      case KC_ESC:
+        // macro to have escape also desactivating caps lock if active
+        if (record->event.pressed) {
+          if (capslock_on) {
+            SEND_STRING(SS_TAP(X_ESCAPE) SS_TAP(X_CAPSLOCK));
+            capslock_on = false;
+          } else {
+            SEND_STRING(SS_TAP(X_ESCAPE));
+          }
+          return false;
+        }
+        break;
+      case COPY:
+        if (record->event.pressed) {
+          SEND_STRING(SS_LCTRL("c"));
+          return false;
+        }
+        break;
+      case PASTE:
+        if (record->event.pressed) {
+          SEND_STRING(SS_LCTRL("v"));
+          return false;
+        }
+        break;
+      case CUT:
+        if (record->event.pressed) {
+          SEND_STRING(SS_LCTRL("x"));
+          return false;
+        }
+        break;
+      case SHIFT:
+        // macro to activate caps lock if both shift are pressed
+        if (record->event.pressed) {
+          if (keyboard_report->mods & (MOD_BIT(KC_LSFT))){
+            // if shift is already register from the other hand
+            // activate caps lock
+            unregister_code(KC_LSFT);
+            SEND_STRING(SS_TAP(X_CAPSLOCK));
+            capslock_on = !capslock_on;
+            return false;
+          }else{
+            // register shift as it is the first hand press
+            register_code(KC_LSFT);
+          }
+        }else{
+          unregister_code(KC_LSFT);
+        }
+        break;
+      case CAPSLOCK:
+        if (record->event.pressed) {
+          SEND_STRING(SS_TAP(X_CAPSLOCK));
+          capslock_on = !capslock_on;
+          return false;
+        }
+        break;
+    }
+  }
+  return true;
+}
+
+// Runs just one time when the keyboard initializes.
+void matrix_init_user(void) {
+
+};
+
+// Runs periodicaly (a lot)
+void matrix_scan_user(void) {
+    uint8_t layer = biton32(layer_state);
+
+  if (capslock_on) {
+    //ergodox_right_led_3_on();
+  } else {
+    //ergodox_right_led_3_off();
+  }
+
+  switch (layer) {
+  case BEPO:
+    //ergodox_right_led_1_off();
+    //ergodox_right_led_2_off();
+    break;
+  case UTILITY:
+    //ergodox_right_led_1_on();
+    break;
+  case NUM:
+    //ergodox_right_led_2_on();
+    break;
+  default:
+    // none
+    break;
+  }
 };
