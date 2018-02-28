@@ -19,6 +19,8 @@
 #include "keymap_bepo.h"
 #include <sendstring_bepo.h>
 
+#include "led.c"
+
 #define _______ KC_TRNS
 #define xxxxxxx KC_NO
 
@@ -39,6 +41,7 @@ enum custom_keycodes {
   SHIFT,
   CAPSLOCK,
   ALT_TAB,
+  LED,
 };
 
 static bool capslock_on = false;
@@ -78,7 +81,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   },
 
   [DROP] = {
-    {_______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______},
+    {_______, LED,     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______},
     {_______, _______, _______, _______, _______, _______, _______, S(KC_7), S(KC_8), S(KC_9), _______, KC_TAB },
     {_______, _______, _______, _______, _______, _______, _______, S(KC_4), S(KC_5), S(KC_6), _______, _______},
     {_______, _______, _______, _______, _______, _______, _______, S(KC_1), S(KC_2), S(KC_3), _______, _______},
@@ -196,6 +199,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record)
         return false;
       }
       break;
+    case LED:
+      if (record->event.pressed) {
+        led_level++;
+        led_level %= LED_LEVEL;
+      }
+      break;
   }
 
   return true;
@@ -203,7 +212,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record)
 
 // Runs just one time when the keyboard initializes.
 void matrix_init_user(void) {
-
+   _delay_ms(20);
+  rgblight_enable();
 };
 
 // Runs periodicaly (a lot)
@@ -218,14 +228,19 @@ void matrix_scan_user(void) {
 
   switch (layer) {
   case BEPO:
-    //ergodox_right_led_1_off();
-    //ergodox_right_led_2_off();
+    rgball(NONE);
     break;
   case LOWER:
-    //ergodox_right_led_1_on();
+    rgball(BLUE);
+    break;
+  case RAISE:
+    rgball(RED);
+    break;
+  case RISE:
+    rgball(YELLOW);
     break;
   case DROP:
-    //ergodox_right_led_2_on();
+    rgball(GREEN);
     break;
   default:
     // none
