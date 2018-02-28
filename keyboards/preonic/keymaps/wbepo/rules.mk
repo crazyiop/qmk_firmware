@@ -1,1 +1,2 @@
-AUDIO_ENABLE = no
+AUDIO_ENABLE    = no
+RGBLIGHT_ENABLE = yes
