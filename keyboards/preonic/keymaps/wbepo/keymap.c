@@ -45,6 +45,7 @@ enum custom_keycodes {
 };
 
 static bool capslock_on = false;
+static bool in_tab = false;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [BEPO] = {
@@ -154,7 +155,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record)
 
     case ALT_TAB:
       if (record->event.pressed) {
-        SEND_STRING(SS_LALT(SS_TAP(X_TAB)));
+        if (!in_tab)
+        {
+          SEND_STRING(SS_DOWN(X_LALT) SS_TAP(X_TAB));
+          in_tab = true;
+        }
+        else
+        {
+          SEND_STRING(SS_TAP(X_TAB));
+        }
         return false;
       }
       break;
@@ -228,6 +237,11 @@ void matrix_scan_user(void) {
 
   switch (layer) {
   case BEPO:
+    if (in_tab)
+    {
+      SEND_STRING(SS_UP(X_LALT));
+      in_tab = false;
+    }
     rgball(NONE);
     break;
   case LOWER:
