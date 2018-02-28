@@ -7,6 +7,8 @@ I have made a few change of the bépo layout to accomodate fewer keys keyboard (
 
 But as the bépo layout is standarized, and in xorg xkb (`setxkbmap fr bepo`) I also wanted a keyboard that function on any unix machine, that use that pc-side software layout. i.e all my works will be inside the keyboard, I don't want to touch the pc's layout definition or create my own.
 
+To not use the bépo/bepo name and confuse peoples, I named my layout wbepo as it's biggest change is to move the w to the far left.
+
 ### keys removed
 To use on smaller keyboard, I have removed a few keys that are not that much used:
 - Ç : moved on alt-gr c, replacing the useless copyright symbol
@@ -19,11 +21,32 @@ For symetry, the W and Z needed to move.
 - W takes the place on the left of the A (caps lock on normal keyboard)
 
 ### «»
-The french guillemets are removed. By habits, < and > are left in alt-gr, but that still free two direct acces key for later.
+The french guillemets are removed. By habits, < and > are left in alt-gr, but that still free two direct acces key for the top layer ones that now miss a key : ESC and %.
 
 ## layer
+I like the raise/lower layer, but don't use the adapt layer as I don't like to have both thumb locked for typing anything else. Instead I add 2 other layer: rise/drop.
 
-### alt-gr as raise
-On the bépo layout, alt-gr has a frequent use for some symbols. As I wanted to do some change on the alt-gr 'layer' too, I will use a full layer `RAISE` that will replicate most of the alt-gr modifier.
+On the bépo layout, alt-gr has a frequent use for some symbols. As I wanted to do some change on the alt-gr 'layer' too, I will use the raise layer that will replicate most of the alt-gr modifier (same key placement).
 
+The lower key would have KC_ALT accessible wit tap dance, and the more usefull alt-shortcut habit (like alt-tab) will be remade accesible directly with macro on the lower layer.
 
+### base layer
+ - __testing__ shift keys on SFT_T , and c.
+ - __testing__ ctrl keys on CTL_T w and m.
+
+### raise (alt-gr)
+ - various symbols (|&\~_)
+ - __testing__ lower effort ()[] to uniformize with {}<>
+
+### lower
+ - directional keys (wasd style, I have never got used to the hjkl style)
+ - window changing key (tmux, vim)
+ - some french alt letter (ïçæœùè)
+
+### rise
+ - Functions keys F0-F12
+ - movments: home, end, page up/down (wasd style)
+
+### drop
+ - mostly numeric pad
+ - some media shortcut
