@@ -1,19 +1,21 @@
 # wBépo layout
 
-This layout is based on the french [bépo](https://bepo.fr/wiki/Accueil) layout.
+This layout is based on the french [bépo](https://bepo.fr/wiki/Accueil) layout, which I have been using for 10+ years. It includes the changes and tweaks I gradually implemented after using an ergodox for ~1 year, slowly taking advantage of qmk's features.
 
 ## reason of changes from the bépo layout
 I have made a few change of the bépo layout to accomodate fewer keys keyboard (60%). I also, as a programmer, changed some key as they are non-present in my use ('«»' for example).
 
-But as the bépo layout is standarized, and in xorg xkb (`setxkbmap fr bepo`) I also wanted a keyboard that function on any unix machine, that use that pc-side software layout. i.e all my works will be inside the keyboard, I don't want to touch the pc's layout definition or create my own.
+But as the bépo layout is standarized, and in xorg xkb (`setxkbmap fr bepo`) I also wanted a keyboard that function on any unix machine, that use that pc-side software layout to gives me easy access to french specific character. i.e all my works will be inside the keyboard, I don't want to touch the pc's layout definition or create my own.
 
 To not use the bépo/bepo name and confuse peoples, I named my layout wbepo as it's biggest change is to move the w to the far left.
 
 ### keys removed
-To use on smaller keyboard, I have removed a few keys that are not that much used:
+To use on smaller keyboard, I have removed a few keys that are not that much used (certainly a personla bias here):
 - Ç : moved on alt-gr c, replacing the useless copyright symbol
 - È : is replace by its dead accent "`"
 - À : can now be done with the above dead accent
+
+__testing__ maybe put è on a layer e, and also à on layer a ? this approach would completely free the bépo è key.
 
 ### W Z
 For symetry, the W and Z needed to move.
