@@ -56,7 +56,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     {_______, _______, BP_LESS, BP_GRTR, _______, _______, _______, BP_PSMS, BP_MMNS, BP_OBEL, BP_DVSN, BP_DIFF},
     {ALT_TAB, BP_PIPE, BP_LBRC, BP_RBRC, _______, BP_DGRV, _______, _______, _______, _______, _______, _______},
     {KC_BTN3, BP_AMPR, BP_LPRN, BP_RPRN, BP_EURO, _______, BP_CCED, _______, _______, _______, _______, _______},
-    {_______, BP_BSLS, BP_LCBR, BP_RCBR, KC_UNDS, BP_TILD, _______, _______, BP_DGRK, _______, _______, _______},
+    {_______, BP_BSLS, BP_LCBR, BP_RCBR, BP_UNDS, BP_TILD, _______, _______, BP_DGRK, _______, _______, _______},
     {_______, _______, _______, _______, _______, KC_DEL,  KC_BSPC, _______, _______, _______, _______, _______},
   },
 
